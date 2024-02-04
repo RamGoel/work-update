@@ -1,34 +1,39 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-
+import toast, { Toaster } from 'react-hot-toast'
+import { getUserRepos } from './apis/githubApis';
+import { GithubResponse } from './types/github-api-types';
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [username, setUsername] = useState('');
+  const [pr, setPR]=useState<null|Array<GithubResponse>>(null)
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className='p-4 bg-black h-screen'>
+      <label className='block text-white mb-2 font-semibold'>Github Username:</label>
+      <input className='border-2 p-2 rounded-lg w-1/4' value={username} onChange={(e) => {
+        setUsername(e.target.value)
+      }} />
+      
+      <button className='bg-gray-500 p-3 rounded-lg px-5 block w-1/4 mt-3' onClick={async() => {
+        if (!username) {
+          toast.error('Username is required')
+        } else {
+          const val = await getUserRepos(username)
+          console.log(val)
+          setPR(val)
+        }
+      }}>
+        Get PR's
+      </button>
+      {/* <p className='text-white'>{JSON.stringify(pr?.[0])}</p> */}
+      {
+        pr?.map((item:GithubResponse) => {
+          return <div>
+            <a className='text-white' href={item.payload.pull_request.html_url}>{item?.repo?.url}</a>
+          </div>
+        })
+      }
+      <Toaster />
+    </div>
   )
 }
 
