@@ -7,9 +7,9 @@ const octokit = new Octokit({
 
 const accceptedRepos = ['animall-web', 'coolpool']
 export const getUserRepos = async (userName?: string) => {
-    const res=await octokit.request("GET /users/{owner}/events", {
+    localStorage.setItem('watcher-uname', JSON.stringify(userName))
+    const res=await octokit.request("GET /users/{owner}/events?per_page=100", {
         owner: userName||"github",
-        // repo: "docs",
         per_page:200
     });
 

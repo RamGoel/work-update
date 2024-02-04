@@ -10,7 +10,10 @@ export type GithubResponse = {
                     name:string
                 }
             },
-            html_url:string
+            html_url: string,
+            title: string,
+            state: string,
+            created_at:string
         }
     }
 }
